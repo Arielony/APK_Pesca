@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Pescaa</string>
+
+
+    <!-- MAIN ACTIVITY -->
+    <string name="main_login">Iniciar Sesión</string>
+    <string name="main_registrar">Registrarse</string>
+
+
+    <!-- MENU ACTIVITY -->
+    <string name="menu_btn_productos">Ver lista productos</string>
+    <string name="menu_btn_salir">Salir</string>
+
+</resources>
