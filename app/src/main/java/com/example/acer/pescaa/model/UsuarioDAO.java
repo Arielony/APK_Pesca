@@ -2,12 +2,26 @@ package com.example.acer.pescaa.model;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+import android.widget.Button;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.acer.pescaa.activities.DrawerActivity;
+import com.example.acer.pescaa.activities.MainActivity;
 import com.example.acer.pescaa.db.DBHelper;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class UsuarioDAO {
 
@@ -56,18 +70,75 @@ public class UsuarioDAO {
     }
 
 
-    public boolean loguearUsuario(String username, String password) {
-        SQLiteDatabase db = DBHelper.getReadableDatabase();
-        Cursor res = db.rawQuery("SELECT * FROM " + TABLE + " WHERE " + COLUMN_USERNAME + " = " + username + " AND " + COLUMN_PASSWORD + " = " + password, null);
+    public boolean loguearUsuario(final String username, String password, final Context con, final Button btnLogin) {
 
-        return (res.getCount() > 0);
+
+        btnLogin.setText("Iniciando ...");
+
+        RequestQueue queue = Volley.newRequestQueue(contexto);
+
+
+        String url ="https://saargo.com/api/login.php?USER=" + username + "&PASSWORD=" + password;
+
+        // Request a string response from the provided URL.
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                // Display the first 500 characters of the response string.
+                               // mTextView.setText("Response is: "+ response.substring(0,500));
+                                Log.i("I", response);
+                                Toast.makeText(con, response, Toast.LENGTH_LONG);
+
+                                JSONObject json = null;
+                                try {
+                                    json = new JSONObject(response);
+
+                                    Intent i = new Intent(con, DrawerActivity.class);
+                                    i.putExtra("USER", json.getString("USERNAME"));
+                                    i.putExtra("EMAIL", json.getString("EMAIL"));
+                                    con.startActivity(i);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                    btnLogin.setText("Iniciar Sesión");
+                                    return;
+                                }
+
+
+
+                                btnLogin.setText("Iniciar Sesión");
+
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                            //    mTextView.setText("That didn't work!");
+                                Toast.makeText(con, "Error: " + error.getMessage(), Toast.LENGTH_LONG);
+                                btnLogin.setText("Iniciar Sesión");
+                            }
+                    });
+
+// Add the request to the RequestQueue.
+        queue.add(stringRequest);
+
+
+
+
+/*
+
+
+        SQLiteDatabase db = DBHelper.getReadableDatabase();
+        Cursor res = db.rawQuery("SELECT * FROM " + TABLE + " WHERE " + COLUMN_USERNAME + " = '" + username + "' AND " + COLUMN_PASSWORD + " = '" + password + "'", null);
+
+        return (res.getCount() > 0); */
+        return false;
     }
 
 
     public boolean existeUsuario(String username) {
 
         SQLiteDatabase db = DBHelper.getReadableDatabase();
-        Cursor res = db.rawQuery("SELECT * FROM " + TABLE + " WHERE " + COLUMN_USERNAME + " = " + username, null);
+        Cursor res = db.rawQuery("SELECT * FROM " + TABLE + " WHERE " + COLUMN_USERNAME + " = '" + username + "'", null);
 
         return (res.getCount() > 0);
 

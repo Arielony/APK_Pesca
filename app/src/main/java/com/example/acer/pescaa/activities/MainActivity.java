@@ -50,11 +50,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void login(View v) {
-        if(validarLogin()) {
-            Intent i = new Intent(MainActivity.this, MenuActivity.class);
-            startActivity(i);
-            finish();
-        }
+        validarLogin();
     }
 
 
@@ -69,12 +65,8 @@ public class MainActivity extends AppCompatActivity {
 
         UsuarioDAO udao = new UsuarioDAO(this);
 
-        if(udao.loguearUsuario(txtUsername.getText().toString(), txtPassword.getText().toString())) {
-            Toast.makeText(MainActivity.this, "Ingreso éxitoso!", Toast.LENGTH_SHORT).show();
-            return true;
-        } else {
-            Toast.makeText(MainActivity.this, "Credenciales incorrectas!", Toast.LENGTH_SHORT).show();
-            return false;
-        }
+        udao.loguearUsuario(txtUsername.getText().toString(), txtPassword.getText().toString(), this, btnLogin);
+
+        return true;
     }
 }
