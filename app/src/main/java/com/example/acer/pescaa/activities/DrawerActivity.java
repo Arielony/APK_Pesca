@@ -198,6 +198,7 @@ public class DrawerActivity extends AppCompatActivity
                     rootView = inflater.inflate(R.layout.fragment_crud_usuarios, container, false);
                     break;
                 case 2:
+                    rootView = inflater.inflate(R.layout.fragment_crud_productos, container, false);
                     break;
                 case 3:
                     break;
